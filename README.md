@@ -8,11 +8,15 @@ This project contains Locust load testing scripts for testing two API endpoints:
 
 1. Install dependencies:
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -e .
 ```
 
 2. Configure your API key:
-Edit `locustfile.py` and replace `YOUR_API_KEY` with your actual API key.
+```sh
+export API_KEY="your_actual_api_key_here"
+```
 
 ## Running the Tests
 
@@ -35,12 +39,12 @@ locust
 
 To run without the web UI:
 ```bash
-locust --headless -H https://api-gateway.miromind.online -u 10 -r 1 --run-time 1m
+locust --headless -H https://api-gateway.miromind.site -u 10 -r 1 --run-time 1m
 ```
 
 **For 100 QPS stress testing:**
 ```bash
-locust --headless -H https://api-gateway.miromind.online -u 100 -r 10 --run-time 5m
+locust --headless -H https://api-gateway.miromind.site -u 100 -r 10 --run-time 5m
 ```
 
 Where:

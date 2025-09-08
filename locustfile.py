@@ -1,3 +1,4 @@
+import os
 import random
 
 from locust import HttpUser, constant_throughput, task
@@ -13,8 +14,12 @@ class APIUser(HttpUser):
 
     def on_start(self):
         """Initialize the user with required headers."""
-        # Replace with your actual API key
-        self.api_key = "foobarbaz"
+        # Get API key from environment variable
+        self.api_key = os.getenv("API_KEY", "foobarbaz")
+        
+        if self.api_key == "foobarbaz":
+            print("Warning: Using default API key. Please set API_KEY environment variable.")
+        
         self.serper_headers = {
             "X-API-KEY": self.api_key,
             "Content-Type": "application/json",
@@ -44,7 +49,7 @@ class APIUser(HttpUser):
     @task(1)  # Weight of 1 means this task runs at normal frequency
     def test_jina_endpoint(self):
         """Test the Jina endpoint with random domains."""
-        # choic a random web link from the list
+        # Get a random web link and extract domain
         domain = get_random_web_link()
 
         with self.client.get(
