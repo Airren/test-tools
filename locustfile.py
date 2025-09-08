@@ -1,51 +1,8 @@
 import random
 
 from locust import HttpUser, constant_throughput, task
-
-# Sample queries for the search endpoint
-SEARCH_QUERIES_PREFIX = [
-    "apple inc stock price",
-    "tesla market cap",
-    "bitcoin price",
-    "amazon revenue 2023",
-    "microsoft cloud services",
-    "google ai developments",
-    "meta quarterly earnings",
-    "nvidia gpu demand",
-]
-
-SEARCH_QUERIES_SUFFIX = [
-    "stock price",
-    "market cap",
-    "revenue",
-    "earnings",
-    "gpu demand",
-    "ai research",
-    "quantum computing",
-    "blockchain technology",
-    "cryptocurrency market",
-    "space exploration",
-    "deep learning",
-    "machine learning",
-]
-
-SEARCH_QUERIES = [
-    f"{prefix} {suffix}"
-    for prefix in SEARCH_QUERIES_PREFIX
-    for suffix in SEARCH_QUERIES_SUFFIX
-]
-
-# Sample domains for the Jina endpoint
-TARGET_DOMAINS = [
-    "www.example.com",
-    "www.google.com",
-    "www.github.com",
-    "www.microsoft.com",
-    "www.amazon.com",
-    "www.apple.com",
-    "news.ycombinator.com",
-    "www.reddit.com",
-]
+from query_questions import SERPER_QUERY_QUESTIONS, get_random_question
+from jina_web_links import get_random_web_link, extract_domain
 
 
 class APIUser(HttpUser):
@@ -69,7 +26,7 @@ class APIUser(HttpUser):
     @task(2)  # Weight of 2 means this task runs twice as often
     def test_search_endpoint(self):
         """Test the Serper search endpoint with random queries."""
-        query = random.choice(SEARCH_QUERIES)
+        query = get_random_question()
         payload = {"q": query}
 
         with self.client.post(
@@ -87,7 +44,8 @@ class APIUser(HttpUser):
     @task(1)  # Weight of 1 means this task runs at normal frequency
     def test_jina_endpoint(self):
         """Test the Jina endpoint with random domains."""
-        domain = random.choice(TARGET_DOMAINS)
+        # choic a random web link from the list
+        domain = get_random_web_link()
 
         with self.client.get(
             f"/jina/{domain}",
